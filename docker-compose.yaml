@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: cfstorage
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+    volumes:
+      - postgres_data_storage:/cfdatastorage/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - ecomhub_services_network
+
+  storage-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    ports:
+      - "8002:8002"
+    environment:
+      - CLOUDFLARE_R2_ACCESS_KEY=${CLOUDFLARE_R2_ACCESS_KEY}
+      - CLOUDFLARE_R2_SECRET_KEY=${CLOUDFLARE_R2_SECRET_KEY}
+      - CLOUDFLARE_R2_BUCKET=${CLOUDFLARE_R2_BUCKET}
+      - CLOUDFLARE_R2_ENDPOINT=${CLOUDFLARE_R2_ENDPOINT}
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - ~/.m2:/root/.m2
+    networks:
+      - ecomhub_services_network
+
+volumes:
+  postgres_data_storage:
+
+networks:
+  ecomhub_services_network:
+    external: true
