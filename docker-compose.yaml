@@ -10,7 +10,7 @@ services:
     ports:
       - "5434:5432"
     networks:
-      - ecomhub_services_network
+      - dokploy-network
 
   storage-api:
     build:
@@ -30,11 +30,11 @@ services:
       - .:/app
       - ~/.m2:/root/.m2
     networks:
-      - ecomhub_services_network
+      - dokploy-network
 
 volumes:
   postgres_data_storage:
 
 networks:
-  ecomhub_services_network:
+  dokploy-network:
     external: true
